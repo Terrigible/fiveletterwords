@@ -29,7 +29,9 @@ fn main() {
         bitmask_set.insert(*mask);
     }
     let bitmask_vec: Vec<(&str, u32)> = unique_letter_set_words.iter().map(|&word| (word, word_to_bitmask(word))).collect();
+    let mut bitmask_only_vec = bitmask_vec.clone().iter().copied().map(|(_, mask)| mask).collect::<Vec<u32>>();
     let bitmask_map = HashMap::<&str, u32>::from_iter(bitmask_vec.clone());
+    let reverse_bitmask_map = HashMap::<u32, &str>::from_iter(bitmask_vec.clone().iter().map(|&(word, mask)| (mask, word)));
     let mut disjoint_hashmap:  HashMap<&str, Vec<&str>> = HashMap::new();
     for (word_1, mask_1) in &bitmask_vec {
         let mut disjoint_words: Vec<&str> = Vec::new();
@@ -51,31 +53,37 @@ fn main() {
     for (i, &word_1) in unique_letter_set_words.iter().enumerate(){
         println!("{} {}/{}", word_1, i+1, n_words);
         let mask_1 = *bitmask_map.get(word_1).unwrap();
-        let word_2_set
-        = bitmask_vec.iter().filter_map(|(word, mask)| if mask&mask_1 == 0 {Some(*word)} else {None});
-        for word_2 in word_2_set {
-            let mask_2 = mask_1|bitmask_map.get(word_2).unwrap();
-            let word_3_set
-            = bitmask_vec.iter().filter_map(|(word, mask)| if mask&mask_2 == 0 {Some(*word)} else {None});
-            for word_3 in word_3_set {
-                let mask_3 = mask_2|bitmask_map.get(word_3).unwrap();
-                let word_4_set
-                = bitmask_vec.iter().filter_map(|(word, mask)| if mask&mask_3 == 0 {Some(*word)} else {None});
-                for word_4 in word_4_set {
-                    let mask_4 = mask_3|bitmask_map.get(word_4).unwrap();
-                    let word_5_set
-                    = bitmask_vec.iter().filter_map(|(word, mask)| if mask&mask_4 == 0 {Some(*word)} else {None});
-                    for word_5 in word_5_set {
-                        let word_set = HashSet::<&str>::from_iter([word_1, word_2, word_3, word_4, word_5]);
-                        if found_combos.contains(&word_set){
+        let mask_2_set
+        = bitmask_only_vec.iter().filter(|&mask| mask&mask_1 == 0);
+        for mask_2 in mask_2_set {
+            let cumul_mask_2 = mask_1|mask_2;
+            let mask_3_set
+            = bitmask_only_vec.iter().filter(|&mask| mask&cumul_mask_2 == 0);
+            for mask_3 in mask_3_set {
+                let cumul_mask_3 = cumul_mask_2|mask_3;
+                let mask_4_set
+                = bitmask_only_vec.iter().filter(|&mask| mask&cumul_mask_3 == 0);
+                for mask_4 in mask_4_set {
+                    let cumul_mask_4 = cumul_mask_3|mask_4;
+                    let mask_5_set
+                    = bitmask_only_vec.iter().filter(|&mask| mask&cumul_mask_4 == 0);
+                    for mask_5 in mask_5_set {
+                        let mask_set = HashSet::<u32>::from_iter([mask_1, *mask_2, *mask_3, *mask_4, *mask_5]);
+                        if found_combos.contains(&mask_set){
                             continue;
                         }
+                        found_combos.push(mask_set);
+                        let word_1 = *reverse_bitmask_map.get(&mask_1).unwrap();
+                        let word_2 = *reverse_bitmask_map.get(&mask_2).unwrap();
+                        let word_3 = *reverse_bitmask_map.get(&mask_3).unwrap();
+                        let word_4 = *reverse_bitmask_map.get(&mask_4).unwrap();
+                        let word_5 = *reverse_bitmask_map.get(&mask_5).unwrap();
                         println!("{}, {}, {}, {}, {}", word_1, word_2, word_3, word_4, word_5);
-                        found_combos.push(HashSet::from_iter([word_1, word_2, word_3, word_4, word_5]));
                         writeln!(file, "{}, {}, {}, {}, {}", word_1, word_2, word_3, word_4, word_5).unwrap();
                     }
                 }
             }
         }
+        bitmask_only_vec.remove(0);
     }
 }
