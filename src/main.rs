@@ -52,7 +52,7 @@ fn main() {
     let n_words = unique_letter_set_words.iter().count();
     for (i, &word_1) in unique_letter_set_words.iter().enumerate(){
         println!("{} {}/{}", word_1, i+1, n_words);
-        let mask_1 = *bitmask_map.get(word_1).unwrap();
+        let mask_1 = bitmask_only_vec.remove(0);
         let mask_2_set
         = bitmask_only_vec.iter().filter(|&mask| mask&mask_1 == 0);
         for mask_2 in mask_2_set {
@@ -84,6 +84,5 @@ fn main() {
                 }
             }
         }
-        bitmask_only_vec.remove(0);
     }
 }
