@@ -30,18 +30,7 @@ fn main() {
     }
     let bitmask_vec: Vec<(&str, u32)> = unique_letter_set_words.iter().map(|&word| (word, word_to_bitmask(word))).collect();
     let mut bitmask_only_vec = bitmask_vec.clone().iter().copied().map(|(_, mask)| mask).collect::<Vec<u32>>();
-    let bitmask_map = HashMap::<&str, u32>::from_iter(bitmask_vec.clone());
     let reverse_bitmask_map = HashMap::<u32, &str>::from_iter(bitmask_vec.clone().iter().map(|&(word, mask)| (mask, word)));
-    let mut disjoint_hashmap:  HashMap<&str, Vec<&str>> = HashMap::new();
-    for (word_1, mask_1) in &bitmask_vec {
-        let mut disjoint_words: Vec<&str> = Vec::new();
-        for (word_2, mask_2) in &bitmask_vec {
-            if mask_1 & mask_2 == 0 {
-                disjoint_words.push(word_2)
-            }
-        }
-        disjoint_hashmap.insert(word_1, disjoint_words);
-    }
     let mut found_combos = Vec::new();
     File::create("output.txt").unwrap();
     let mut file
