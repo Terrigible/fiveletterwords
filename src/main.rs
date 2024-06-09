@@ -18,13 +18,10 @@ fn word_to_bitmask(word: &str) -> u32 {
 }
 
 fn main() {
-    let words_string = fs::read_to_string("words_alpha.txt")
-        .expect("Could not read file")
-        .replace("\r\n", "\n");
-    let words = words_string.split("\n");
-    let five_letter_words = words.filter(|word| word.len() == 5);
-    let five_unique_letter_words =
-        five_letter_words.filter(|word| HashSet::<char>::from_iter(word.chars()).len() == 5);
+    let words_string = fs::read_to_string("words_alpha.txt").expect("Could not read file");
+    let words = words_string.split_whitespace();
+    let five_unique_letter_words = words
+        .filter(|word| (word.len() == 5) & (HashSet::<char>::from_iter(word.chars()).len() == 5));
     let mut unique_letter_set_words = Vec::<&str>::new();
     let mut bitmask_set = HashSet::<u32>::new();
     let bitmask_vec: Vec<(&str, u32)> = five_unique_letter_words
