@@ -48,8 +48,8 @@ fn main() {
         .collect();
     let mut bitmask_only_vec = bitmask_vec
         .iter()
-        .copied()
         .map(|(_, mask)| mask)
+        .copied()
         .collect::<Vec<u32>>();
     let reverse_bitmask_map =
         HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
