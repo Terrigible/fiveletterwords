@@ -42,6 +42,19 @@ fn main() {
         unique_letter_set_words.push(word);
         bitmask_set.insert(*mask);
     }
+    let chars: Vec<char> = unique_letter_set_words
+        .iter()
+        .map(|&word| word.chars())
+        .flatten()
+        .collect();
+    let char_counts = chars.iter().fold(HashMap::new(), |mut acc, &c| {
+        *acc.entry(c).or_insert(0) += 1;
+        acc
+    });
+    let mut char_counts_vec = char_counts.iter().collect::<Vec<_>>();
+    char_counts_vec.sort_by_key(|&(_, &count)| count);
+    println!("{:?}", char_counts_vec);
+    unique_letter_set_words.sort_by_key(|word| word.chars().map(|c| char_counts[&c]).min());
     let bitmask_vec: Vec<(&str, u32)> = unique_letter_set_words
         .iter()
         .map(|&word| (word, word_to_bitmask(word)))
@@ -55,10 +68,16 @@ fn main() {
         HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
     let mut found_combos = Vec::new();
     let mut file_buf = Vec::new();
-    let n_words = unique_letter_set_words.iter().count();
-    for (i, &word_1) in unique_letter_set_words.iter().enumerate() {
-        println!("{} {}/{}", word_1, i + 1, n_words);
-        let mask_1 = bitmask_only_vec.remove(0);
+    let first_letter_mask = word_to_bitmask(&char_counts_vec[0].0.to_string());
+    let second_letter_mask = word_to_bitmask(&char_counts_vec[1].0.to_string());
+    let first_two_letter_mask = first_letter_mask | second_letter_mask;
+    for mask_1 in bitmask_only_vec
+        .iter()
+        .filter(|&&mask| mask & first_two_letter_mask != 0)
+        .copied()
+        .collect::<Vec<_>>()
+    {
+        bitmask_only_vec.retain(|&mask| mask != mask_1);
         let mask_2_set = get_next_mask_set(&bitmask_only_vec, &mask_1);
         for mask_2 in mask_2_set.iter() {
             let mask_3_set = get_next_mask_set(&mask_2_set, mask_2);
