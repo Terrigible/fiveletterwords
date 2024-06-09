@@ -17,6 +17,14 @@ fn word_to_bitmask(word: &str) -> u32 {
     alphabet_mask
 }
 
+fn get_next_mask_set(bitmask_only_vec: &[u32], cumul_mask: &u32) -> Vec<u32> {
+    bitmask_only_vec
+        .iter()
+        .filter(|&mask| mask & cumul_mask == 0)
+        .copied()
+        .collect()
+}
+
 fn main() {
     let words_string = fs::read_to_string("words_alpha.txt").expect("Could not read file");
     let words = words_string.split_whitespace();
@@ -52,25 +60,16 @@ fn main() {
     for (i, &word_1) in unique_letter_set_words.iter().enumerate() {
         println!("{} {}/{}", word_1, i + 1, n_words);
         let mask_1 = bitmask_only_vec.remove(0);
-        let mask_2_set = bitmask_only_vec.iter().filter(|&mask| mask & mask_1 == 0);
-        for mask_2 in mask_2_set {
-            let cumul_mask_2 = mask_1 | mask_2;
-            let mask_3_set = bitmask_only_vec
-                .iter()
-                .filter(|&mask| mask & cumul_mask_2 == 0);
-            for mask_3 in mask_3_set {
-                let cumul_mask_3 = cumul_mask_2 | mask_3;
-                let mask_4_set = bitmask_only_vec
-                    .iter()
-                    .filter(|&mask| mask & cumul_mask_3 == 0);
-                for mask_4 in mask_4_set {
-                    let cumul_mask_4 = cumul_mask_3 | mask_4;
-                    let mask_5_set = bitmask_only_vec
-                        .iter()
-                        .filter(|&mask| mask & cumul_mask_4 == 0);
+        let mask_2_set = get_next_mask_set(&bitmask_only_vec, &mask_1);
+        for mask_2 in mask_2_set.iter() {
+            let mask_3_set = get_next_mask_set(&mask_2_set, mask_2);
+            for mask_3 in mask_3_set.iter() {
+                let mask_4_set = get_next_mask_set(&mask_3_set, mask_3);
+                for mask_4 in mask_4_set.iter() {
+                    let mask_5_set = get_next_mask_set(&mask_4_set, mask_4);
                     for mask_5 in mask_5_set {
                         let mask_set =
-                            HashSet::<u32>::from_iter([mask_1, *mask_2, *mask_3, *mask_4, *mask_5]);
+                            HashSet::<u32>::from_iter([mask_1, *mask_2, *mask_3, *mask_4, mask_5]);
                         if found_combos.contains(&mask_set) {
                             continue;
                         }
