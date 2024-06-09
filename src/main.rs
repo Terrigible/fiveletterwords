@@ -39,14 +39,12 @@ fn main() {
         .map(|&word| (word, word_to_bitmask(word)))
         .collect();
     let mut bitmask_only_vec = bitmask_vec
-        .clone()
         .iter()
         .copied()
         .map(|(_, mask)| mask)
         .collect::<Vec<u32>>();
-    let reverse_bitmask_map = HashMap::<u32, &str>::from_iter(
-        bitmask_vec.clone().iter().map(|&(word, mask)| (mask, word)),
-    );
+    let reverse_bitmask_map =
+        HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
     let mut found_combos = Vec::new();
     File::create("output.txt").unwrap();
     let mut file = OpenOptions::new().append(true).open("output.txt").unwrap();
