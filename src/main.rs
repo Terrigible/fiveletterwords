@@ -54,8 +54,7 @@ fn main() {
     let reverse_bitmask_map =
         HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
     let mut found_combos = Vec::new();
-    File::create("output.txt").unwrap();
-    let mut file = OpenOptions::new().append(true).open("output.txt").unwrap();
+    let mut file_buf = Vec::new();
     let n_words = unique_letter_set_words.iter().count();
     for (i, &word_1) in unique_letter_set_words.iter().enumerate() {
         println!("{} {}/{}", word_1, i + 1, n_words);
@@ -81,7 +80,7 @@ fn main() {
                         let word_5 = *reverse_bitmask_map.get(&mask_5).unwrap();
                         println!("{}, {}, {}, {}, {}", word_1, word_2, word_3, word_4, word_5);
                         writeln!(
-                            file,
+                            file_buf,
                             "{}, {}, {}, {}, {}",
                             word_1, word_2, word_3, word_4, word_5
                         )
@@ -91,4 +90,7 @@ fn main() {
             }
         }
     }
+    File::create("output.txt").unwrap();
+    let mut file = OpenOptions::new().append(true).open("output.txt").unwrap();
+    file.write_all(&file_buf).unwrap();
 }
