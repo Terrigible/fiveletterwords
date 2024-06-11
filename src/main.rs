@@ -32,16 +32,15 @@ fn main() {
         .filter(|word| (word.len() == 5) & (HashSet::<char>::from_iter(word.chars()).len() == 5));
     let mut unique_letter_set_words = Vec::<&str>::new();
     let mut bitmask_set = HashSet::<u32>::new();
-    let bitmask_vec: Vec<(&str, u32)> = five_unique_letter_words
+    five_unique_letter_words
         .map(|word| (word, word_to_bitmask(word)))
-        .collect();
-    for (word, mask) in &bitmask_vec {
-        if bitmask_set.contains(mask) {
-            continue;
-        }
-        unique_letter_set_words.push(word);
-        bitmask_set.insert(*mask);
-    }
+        .for_each(|(word, mask)| {
+            if bitmask_set.contains(&mask) {
+                return;
+            }
+            unique_letter_set_words.push(word);
+            bitmask_set.insert(mask);
+        });
     let chars: Vec<char> = unique_letter_set_words
         .iter()
         .flat_map(|&word| word.chars())
