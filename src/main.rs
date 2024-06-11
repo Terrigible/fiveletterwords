@@ -66,7 +66,6 @@ fn main() {
         .collect::<Vec<u32>>();
     let reverse_bitmask_map =
         HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
-    let mut found_combos = Vec::new();
     let mut file_buf = Vec::new();
     let first_letter_mask = word_to_bitmask(&char_counts_vec[0].0.to_string());
     let second_letter_mask = word_to_bitmask(&char_counts_vec[1].0.to_string());
@@ -78,20 +77,17 @@ fn main() {
         .collect::<Vec<_>>()
     {
         bitmask_only_vec.retain(|&mask| mask != mask_1);
-        let mask_2_set = get_next_mask_set(&bitmask_only_vec, &mask_1);
-        for mask_2 in mask_2_set.iter() {
-            let mask_3_set = get_next_mask_set(&mask_2_set, mask_2);
-            for mask_3 in mask_3_set.iter() {
-                let mask_4_set = get_next_mask_set(&mask_3_set, mask_3);
-                for mask_4 in mask_4_set.iter() {
-                    let mask_5_set = get_next_mask_set(&mask_4_set, mask_4);
+        let mut mask_2_set = get_next_mask_set(&bitmask_only_vec, &mask_1);
+        for mask_2 in mask_2_set.clone() {
+            mask_2_set.retain(|&mask| mask != mask_2);
+            let mut mask_3_set = get_next_mask_set(&mask_2_set, &mask_2);
+            for mask_3 in mask_3_set.clone() {
+                mask_3_set.retain(|&mask| mask != mask_3);
+                let mut mask_4_set = get_next_mask_set(&mask_3_set, &mask_3);
+                for mask_4 in mask_4_set.clone() {
+                    mask_4_set.retain(|&mask| mask != mask_4);
+                    let mask_5_set = get_next_mask_set(&mask_4_set, &mask_4);
                     for mask_5 in mask_5_set {
-                        let mask_set =
-                            HashSet::<u32>::from_iter([mask_1, *mask_2, *mask_3, *mask_4, mask_5]);
-                        if found_combos.contains(&mask_set) {
-                            continue;
-                        }
-                        found_combos.push(mask_set);
                         let word_1 = *reverse_bitmask_map.get(&mask_1).unwrap();
                         let word_2 = *reverse_bitmask_map.get(&mask_2).unwrap();
                         let word_3 = *reverse_bitmask_map.get(&mask_3).unwrap();
