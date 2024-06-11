@@ -5,7 +5,7 @@ use std::{
 };
 
 fn word_to_bitmask(word: &str) -> u32 {
-    let mut alphabet_mask: u32 = 0b0000_0000_0000_0000_0000_0000_0000_0000;
+    let mut alphabet_mask: u32 = 0;
     let mut bit_selector: u32 = 0b1000_0000_0000_0000_0000_0000_0000_0000;
     let word_chars = word.chars().collect::<HashSet<char>>();
     for alphabet in "abcdefghijklmnopqrstuvwxyz".chars() {
