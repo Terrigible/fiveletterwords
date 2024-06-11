@@ -12,7 +12,7 @@ fn word_to_bitmask(word: &str) -> u32 {
         if word_chars.contains(&alphabet) {
             alphabet_mask |= bit_selector;
         }
-        bit_selector = bit_selector >> 1;
+        bit_selector >>= 1;
     }
     alphabet_mask
 }
@@ -44,8 +44,7 @@ fn main() {
     }
     let chars: Vec<char> = unique_letter_set_words
         .iter()
-        .map(|&word| word.chars())
-        .flatten()
+        .flat_map(|&word| word.chars())
         .collect();
     let char_counts = chars.iter().fold(HashMap::new(), |mut acc, &c| {
         *acc.entry(c).or_insert(0) += 1;
