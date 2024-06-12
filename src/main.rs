@@ -51,7 +51,6 @@ fn main() {
     });
     let mut char_counts_vec = char_counts.iter().collect::<Vec<_>>();
     char_counts_vec.sort_by_key(|&(_, &count)| count);
-    println!("{:?}", char_counts_vec);
     unique_letter_set_words.sort_by_key(|word| word.chars().map(|c| char_counts[&c]).min());
     let bitmask_vec: Vec<(&str, u32)> = unique_letter_set_words
         .iter()
