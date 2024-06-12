@@ -63,7 +63,8 @@ fn main() {
         .collect::<Vec<u32>>();
     let reverse_bitmask_map =
         HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
-    let mut file_buf = Vec::new();
+    File::create("output.txt").unwrap();
+    let mut file = OpenOptions::new().append(true).open("output.txt").unwrap();
     let first_letter_mask = word_to_bitmask(&char_counts_vec[0].0.to_string());
     let second_letter_mask = word_to_bitmask(&char_counts_vec[1].0.to_string());
     let first_two_letter_mask = first_letter_mask | second_letter_mask;
@@ -92,7 +93,7 @@ fn main() {
                         let word_5 = *reverse_bitmask_map.get(&mask_5).unwrap();
                         println!("{}, {}, {}, {}, {}", word_1, word_2, word_3, word_4, word_5);
                         writeln!(
-                            file_buf,
+                            file,
                             "{}, {}, {}, {}, {}",
                             word_1, word_2, word_3, word_4, word_5
                         )
@@ -102,7 +103,4 @@ fn main() {
             }
         }
     }
-    File::create("output.txt").unwrap();
-    let mut file = OpenOptions::new().append(true).open("output.txt").unwrap();
-    file.write_all(&file_buf).unwrap();
 }
