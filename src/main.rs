@@ -86,11 +86,11 @@ fn main() {
                     mask_4_set.remove(0);
                     let mask_5_set = get_next_mask_set(&mask_4_set, &mask_4);
                     for mask_5 in mask_5_set {
-                        let word_1 = *reverse_bitmask_map.get(&mask_1).unwrap();
-                        let word_2 = *reverse_bitmask_map.get(&mask_2).unwrap();
-                        let word_3 = *reverse_bitmask_map.get(&mask_3).unwrap();
-                        let word_4 = *reverse_bitmask_map.get(&mask_4).unwrap();
-                        let word_5 = *reverse_bitmask_map.get(&mask_5).unwrap();
+                        let word_1 = reverse_bitmask_map[&mask_1];
+                        let word_2 = reverse_bitmask_map[&mask_2];
+                        let word_3 = reverse_bitmask_map[&mask_3];
+                        let word_4 = reverse_bitmask_map[&mask_4];
+                        let word_5 = reverse_bitmask_map[&mask_5];
                         println!("{}, {}, {}, {}, {}", word_1, word_2, word_3, word_4, word_5);
                         writeln!(
                             file,
