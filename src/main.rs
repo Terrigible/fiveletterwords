@@ -17,7 +17,7 @@ fn word_to_bitmask(word: &str) -> u32 {
     alphabet_mask
 }
 
-fn get_next_mask_set(bitmask_only_vec: &[u32], cumul_mask: u32) -> Vec<u32> {
+fn get_next_mask_set(bitmask_only_vec: &[u32], cumul_mask: &u32) -> Vec<u32> {
     bitmask_only_vec
         .iter()
         .filter(|&mask| mask & cumul_mask == 0)
@@ -57,7 +57,7 @@ fn main() {
         .iter()
         .map(|&word| (word, word_to_bitmask(word)))
         .collect();
-    let mut bitmask_only_vec = bitmask_vec
+    let bitmask_only_vec = bitmask_vec
         .iter()
         .map(|(_, mask)| mask)
         .copied()
@@ -69,29 +69,24 @@ fn main() {
     let first_letter_mask = word_to_bitmask(&char_counts_vec[0].0.to_string());
     let second_letter_mask = word_to_bitmask(&char_counts_vec[1].0.to_string());
     let first_two_letter_mask = first_letter_mask | second_letter_mask;
-    for mask_1 in bitmask_only_vec
+    for (i, mask_1) in bitmask_only_vec
         .iter()
         .filter(|&&mask| mask & first_two_letter_mask != 0)
-        .copied()
-        .collect::<Vec<_>>()
+        .enumerate()
     {
-        bitmask_only_vec.remove(0);
-        let mut mask_2_set = get_next_mask_set(&bitmask_only_vec, mask_1);
-        for mask_2 in mask_2_set.clone() {
-            mask_2_set.remove(0);
-            let mut mask_3_set = get_next_mask_set(&mask_2_set, mask_2);
-            for mask_3 in mask_3_set.clone() {
-                mask_3_set.remove(0);
-                let mut mask_4_set = get_next_mask_set(&mask_3_set, mask_3);
-                for mask_4 in mask_4_set.clone() {
-                    mask_4_set.remove(0);
-                    let mask_5_set = get_next_mask_set(&mask_4_set, mask_4);
-                    for mask_5 in mask_5_set {
-                        let word_1 = reverse_bitmask_map[&mask_1];
-                        let word_2 = reverse_bitmask_map[&mask_2];
-                        let word_3 = reverse_bitmask_map[&mask_3];
-                        let word_4 = reverse_bitmask_map[&mask_4];
-                        let word_5 = reverse_bitmask_map[&mask_5];
+        let mask_2_set = get_next_mask_set(&bitmask_only_vec[(i + 1)..], mask_1);
+        for (j, mask_2) in mask_2_set.iter().enumerate() {
+            let mask_3_set = get_next_mask_set(&mask_2_set[(j + 1)..], mask_2);
+            for (k, mask_3) in mask_3_set.iter().enumerate() {
+                let mask_4_set = get_next_mask_set(&mask_3_set[(k + 1)..], mask_3);
+                for (l, mask_4) in mask_4_set.iter().enumerate() {
+                    let mask_5_set = get_next_mask_set(&mask_4_set[(l + 1)..], mask_4);
+                    for mask_5 in mask_5_set.iter() {
+                        let word_1 = reverse_bitmask_map[mask_1];
+                        let word_2 = reverse_bitmask_map[mask_2];
+                        let word_3 = reverse_bitmask_map[mask_3];
+                        let word_4 = reverse_bitmask_map[mask_4];
+                        let word_5 = reverse_bitmask_map[mask_5];
                         println!("{}, {}, {}, {}, {}", word_1, word_2, word_3, word_4, word_5);
                         writeln!(
                             file,
