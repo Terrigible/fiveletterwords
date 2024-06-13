@@ -26,6 +26,7 @@ fn get_next_mask_set(bitmask_only_vec: &[u32], cumul_mask: u32) -> Vec<u32> {
 }
 
 fn main() {
+    let start_time = std::time::Instant::now();
     let words_string = fs::read_to_string("words_alpha.txt").expect("Could not read file");
     let words = words_string.split_whitespace();
     let five_unique_letter_words = words
@@ -103,4 +104,5 @@ fn main() {
             }
         }
     }
+    println!("Elapsed time: {:?}", start_time.elapsed());
 }
