@@ -58,15 +58,14 @@ fn main() {
             word.chars().map(|c| char_counts[&c]).sum::<u32>(),
         )
     });
+    let bitmask_only_vec: Vec<u32> = unique_letter_set_words
+        .iter()
+        .map(|&word| word_to_bitmask(word))
+        .collect();
     let bitmask_vec: Vec<(&str, u32)> = unique_letter_set_words
         .iter()
         .map(|&word| (word, word_to_bitmask(word)))
         .collect();
-    let bitmask_only_vec = bitmask_vec
-        .iter()
-        .map(|(_, mask)| mask)
-        .copied()
-        .collect::<Vec<u32>>();
     let reverse_bitmask_map =
         HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
     File::create("output.txt").unwrap();
