@@ -1,6 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
-    fs::{self, File, OpenOptions},
+    fs::{self, File},
     io::Write,
 };
 
@@ -68,8 +68,7 @@ fn main() {
         .collect();
     let reverse_bitmask_map =
         HashMap::<u32, &str>::from_iter(bitmask_vec.iter().map(|&(word, mask)| (mask, word)));
-    File::create("output.txt").unwrap();
-    let mut file = OpenOptions::new().append(true).open("output.txt").unwrap();
+    let mut file = File::create("output.txt").unwrap();
     let first_letter_mask = word_to_bitmask(&char_counts_vec[0].0.to_string());
     let second_letter_mask = word_to_bitmask(&char_counts_vec[1].0.to_string());
     let first_two_letter_mask = first_letter_mask | second_letter_mask;
