@@ -83,8 +83,10 @@ fn main() {
             for (k, mask_3) in mask_3_set.iter().enumerate() {
                 let mask_4_set = get_next_mask_set(&mask_3_set[(k + 1)..], mask_3);
                 for (l, mask_4) in mask_4_set.iter().enumerate() {
-                    let mask_5_set = get_next_mask_set(&mask_4_set[(l + 1)..], mask_4);
-                    for mask_5 in mask_5_set.iter() {
+                    let mask_5_set = mask_4_set[(l + 1)..]
+                        .iter()
+                        .filter(|&mask| mask & mask_4 == 0);
+                    for mask_5 in mask_5_set {
                         let word_1 = reverse_bitmask_map[mask_1];
                         let word_2 = reverse_bitmask_map[mask_2];
                         let word_3 = reverse_bitmask_map[mask_3];
