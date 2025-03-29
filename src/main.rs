@@ -17,10 +17,10 @@ fn word_to_bitmask(word: &str) -> u32 {
     alphabet_mask
 }
 
-fn get_next_mask_set(bitmask_only_vec: &[u32], cumul_mask: &u32) -> Vec<u32> {
+fn get_next_mask_set(bitmask_only_vec: &[u32], prev_mask: &u32) -> Vec<u32> {
     bitmask_only_vec
         .iter()
-        .filter(|&mask| mask & cumul_mask == 0)
+        .filter(|&mask| mask & prev_mask == 0)
         .copied()
         .collect()
 }
