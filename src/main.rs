@@ -6,13 +6,9 @@ use std::{
 
 fn word_to_bitmask(word: &str) -> u32 {
     let mut alphabet_mask: u32 = 0;
-    let mut bit_selector: u32 = 0b1000_0000_0000_0000_0000_0000_0000_0000;
-    let word_chars = word.chars().collect::<HashSet<char>>();
-    for alphabet in "abcdefghijklmnopqrstuvwxyz".chars() {
-        if word_chars.contains(&alphabet) {
-            alphabet_mask |= bit_selector;
-        }
-        bit_selector >>= 1;
+    let word_chars = word.chars().collect::<Box<[char]>>();
+    for char in word_chars {
+        alphabet_mask |= 1 << char as u8 - b'a';
     }
     alphabet_mask
 }

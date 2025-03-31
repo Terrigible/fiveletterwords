@@ -3,7 +3,8 @@ name = "fiveletterwords"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-
 [profile.release]
-debug = true
+debug = false
+lto = true
+codegen-units = 1
+panic = "abort"
